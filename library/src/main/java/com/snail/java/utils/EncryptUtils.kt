@@ -325,3 +325,10 @@ object EncryptUtils {
         return cipher.doFinal(encrypted)
     }
 }
+
+/**
+ * 获取文件MD5值
+ */
+fun File.getMD5Code(): String? {
+    return EncryptUtils.getFileMD5Code(this)
+}
