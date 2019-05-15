@@ -1,5 +1,6 @@
 package com.snail.java.network.converter
 
+import com.snail.java.network.exception.ConvertException
 import okhttp3.ResponseBody
 
 /**
@@ -9,7 +10,11 @@ import okhttp3.ResponseBody
  * author: zengfansheng
  */
 class StringResponseConverter : ResponseConverter<String> {
-    override fun convert(value: ResponseBody): String {
-        return value.string()
+    override fun convert(value: ResponseBody?): String? {
+        if (value == null) {
+            throw ConvertException("ResponseBody is null")
+        } else {
+            return value.string()
+        }
     }
 }

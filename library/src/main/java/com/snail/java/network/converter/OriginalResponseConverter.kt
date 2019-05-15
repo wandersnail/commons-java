@@ -9,7 +9,7 @@ import okhttp3.ResponseBody
  * author: zengfansheng
  */
 class OriginalResponseConverter : ResponseConverter<ResponseBody> {
-    override fun convert(value: ResponseBody): ResponseBody {
+    override fun convert(value: ResponseBody?): ResponseBody? {
         return value
     }
 }

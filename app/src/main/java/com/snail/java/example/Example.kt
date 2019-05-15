@@ -5,6 +5,7 @@ import com.snail.java.network.callback.RequestCallback
 import com.snail.java.network.converter.StringResponseConverter
 import com.snail.java.utils.getMD5Code
 import com.snail.java.utils.toDetailMsg
+import okhttp3.Response
 import java.io.File
 
 /**
@@ -21,8 +22,8 @@ object Example {
 
     private fun testNetwork() {
         NetworkRequester.get("https://www.baidu.com", StringResponseConverter(), object : RequestCallback<String> {
-            override fun onSuccess(parsedResp: String) {
-                println(parsedResp)
+            override fun onSuccess(response: Response, convertedBody: String?) {
+                println(convertedBody)
                 System.exit(0)
             }
 

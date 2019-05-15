@@ -1,10 +1,13 @@
 package com.snail.java.network.upload
 
 import io.reactivex.Observable
-import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
-import retrofit2.http.*
+import retrofit2.Response
+import retrofit2.http.Multipart
+import retrofit2.http.POST
+import retrofit2.http.PartMap
+import retrofit2.http.Url
 
 /**
  *
@@ -15,9 +18,5 @@ import retrofit2.http.*
 internal interface UploadService {
     @POST
     @Multipart
-    fun upload(@Url url: String, @Part file: MultipartBody.Part): Observable<ResponseBody>
-
-    @POST
-    @Multipart
-    fun upload(@Url url: String, @PartMap args: Map<String, @JvmSuppressWildcards RequestBody>, @Part file: MultipartBody.Part): Observable<ResponseBody>
+    fun upload(@Url url: String, @PartMap args: Map<String, @JvmSuppressWildcards RequestBody>): Observable<Response<ResponseBody>>
 }

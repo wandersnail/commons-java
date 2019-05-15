@@ -1,7 +1,6 @@
 package com.snail.java.network.converter
 
 import com.alibaba.fastjson.JSON
-import com.snail.java.network.exception.ConvertException
 import okhttp3.ResponseBody
 import okio.Okio
 import retrofit2.Converter
@@ -17,13 +16,9 @@ import java.lang.reflect.Type
  */
 class FastJsonResponseBodyConverter(private val type: Type) : Converter<ResponseBody, Any> {
     override fun convert(value: ResponseBody): Any? {
-        try {
-            val bufferedSource = Okio.buffer(value.source())
-            val tempStr = bufferedSource.readUtf8()
-            bufferedSource.close()
-            return JSON.parseObject(tempStr, type)
-        } catch (t: Throwable) {
-            throw ConvertException(t.message, t)
-        }
+        val bufferedSource = Okio.buffer(value.source())
+        val tempStr = bufferedSource.readUtf8()
+        bufferedSource.close()
+        return JSON.parseObject(tempStr, type)
     }
 }

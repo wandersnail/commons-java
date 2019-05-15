@@ -1,9 +1,5 @@
 package com.snail.java.network.utils
 
-import com.snail.java.network.converter.Converter
-import io.reactivex.Observable
-import okhttp3.ResponseBody
-
 
 
 /**
@@ -25,9 +21,5 @@ object HttpUtils {
         return if (index != -1) {
             urlHead + subUrl.substring(0, index)
         } else url
-    }
-
-    internal fun <T> convertObservable(observable: Observable<ResponseBody>, converter: Converter<ResponseBody, T>): Observable<T> {
-        return observable.map { converter.convert(it) }
     }
 }
