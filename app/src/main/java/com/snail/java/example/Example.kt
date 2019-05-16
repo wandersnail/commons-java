@@ -17,7 +17,9 @@ import java.io.File
 object Example {
     @JvmStatic
     fun main(args: Array<String>) {
-        
+        val response = NetworkRequester.get("https://www.baidu.com", StringResponseConverter())
+        println(response.convertedBody)
+        println(response.raw.code())
     }
 
     private fun testNetwork() {
