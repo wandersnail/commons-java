@@ -9,12 +9,12 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import java.net.URLEncoder
 
 /**
- * 上传执行
+ * 上传执行者
  *
  * date: 2019/2/28 18:21
  * author: zengfansheng
  */
-class UploadWorker<T> @JvmOverloads constructor(info: UploadInfo<T>, listener: UploadListener? = null) : Disposable {
+class UploadWorker<T> @JvmOverloads internal constructor(info: UploadInfo<T>, listener: UploadListener<T>? = null) : Disposable {
     private val observer = UploadObserver(info, listener)
 
     init {

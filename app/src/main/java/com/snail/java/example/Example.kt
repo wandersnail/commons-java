@@ -19,7 +19,7 @@ object Example {
     fun main(args: Array<String>) {
         val response = NetworkRequester.get("https://www.baidu.com", StringResponseConverter())
         println(response.convertedBody)
-        println(response.raw.code())
+        println(response.raw?.code())
     }
 
     private fun testNetwork() {

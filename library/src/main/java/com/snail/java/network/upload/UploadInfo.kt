@@ -3,7 +3,6 @@ package com.snail.java.network.upload
 import com.snail.java.network.TaskInfo
 import com.snail.java.network.converter.ResponseConverter
 import okhttp3.OkHttpClient
-import okhttp3.Response
 import java.io.File
 import java.util.*
 
@@ -20,15 +19,4 @@ import java.util.*
  */
 open class UploadInfo<R>
 @JvmOverloads constructor(url: String, internal val converter: ResponseConverter<R>, val paramParts: Map<String, String>, val fileParts: Map<String, File>,
-                          internal val client: OkHttpClient? = null, tag: String = UUID.randomUUID().toString()) : TaskInfo(url, tag) {
-
-    /**
-     * 服务端响应数据
-     */
-    var response: Response? = null
-
-    /**
-     * 转换过的body
-     */
-    var convertedBody: R? = null
-}
+                          internal val client: OkHttpClient? = null, tag: String = UUID.randomUUID().toString()) : TaskInfo(url, tag)
