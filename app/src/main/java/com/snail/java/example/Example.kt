@@ -3,7 +3,9 @@ package com.snail.java.example
 import com.snail.java.network.NetworkRequester
 import com.snail.java.network.callback.RequestCallback
 import com.snail.java.network.converter.StringResponseConverter
+import com.snail.java.utils.FileUtils
 import com.snail.java.utils.getMD5Code
+import com.snail.java.utils.size
 import com.snail.java.utils.toDetailMsg
 import okhttp3.Response
 import java.io.File
@@ -17,9 +19,8 @@ import java.io.File
 object Example {
     @JvmStatic
     fun main(args: Array<String>) {
-        val response = NetworkRequester.get("https://www.baidu.com", StringResponseConverter())
-        println(response.convertedBody)
-        println(response.raw?.code())
+        val size = File("C:\\Users\\zfs\\Desktop\\VicoolFinal").size()
+        println("${FileUtils.formatFileSize(size)}, ${size}字节")
     }
 
     private fun testNetwork() {
