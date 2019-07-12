@@ -3,7 +3,6 @@ package com.snail.java.network.upload
 import io.reactivex.disposables.Disposable
 import okhttp3.MediaType
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import java.net.URLEncoder
@@ -26,13 +25,16 @@ class UploadWorker<T> @JvmOverloads internal constructor(info: UploadInfo<T>, li
             .baseUrl(info.baseUrl)
             .build()
             .create(UploadService::class.java)
-        val parts = HashMap<String, @JvmSuppressWildcards RequestBody>()
-        info.paramParts.entries.forEach { parts[it.key] = RequestBody.create(null, it.value) }
-        info.fileParts.entries.forEach {
-            MultipartBody.Part.createFormData(it.key, URLEncoder.encode(it.value.name, "utf-8"),
-                ProgressRequestBody(MediaType.parse("multipart/form-data"), it.key, it.value, observer))
+        val bodyBuilder = MultipartBody.Builder()
+        info.paramParts.entries.forEach {
+            bodyBuilder.addFormDataPart(it.key, it.value)
         }
-        service.upload(info.url, parts).subscribe(observer)
+        info.fileParts.entries.forEach {
+            val part = MultipartBody.Part.createFormData(it.key, URLEncoder.encode(it.value.name, "utf-8"),
+                ProgressRequestBody(MediaType.parse("multipart/form-data"), it.key, it.value, observer))
+            bodyBuilder.addPart(part)
+        }
+        service.upload(info.url, bodyBuilder.build()).subscribe(observer)
     }
 
     override fun dispose() {

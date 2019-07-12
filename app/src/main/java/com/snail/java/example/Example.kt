@@ -1,11 +1,13 @@
 package com.snail.java.example
 
 import com.snail.java.network.NetworkRequester
+import com.snail.java.network.TaskInfo
 import com.snail.java.network.callback.RequestCallback
+import com.snail.java.network.converter.JsonResponseConverter
 import com.snail.java.network.converter.StringResponseConverter
-import com.snail.java.utils.FileUtils
+import com.snail.java.network.upload.UploadInfo
+import com.snail.java.network.upload.UploadListener
 import com.snail.java.utils.getMD5Code
-import com.snail.java.utils.size
 import com.snail.java.utils.toDetailMsg
 import okhttp3.Response
 import java.io.File
@@ -19,8 +21,25 @@ import java.io.File
 object Example {
     @JvmStatic
     fun main(args: Array<String>) {
-        val size = File("C:\\Users\\zfs\\Desktop\\VicoolFinal").size()
-        println("${FileUtils.formatFileSize(size)}, ${size}字节")
+        val info = UploadInfo("http://120.78.49.23:8080/CM/api?action=1007", 
+            JsonResponseConverter(BaseResponse::class.java), mapOf(Pair("mailaddress", "16607735715")), 
+            mapOf(Pair("file", File("C:\\Users\\zfs\\Desktop\\horse.png"))))
+        NetworkRequester.upload(info, object : UploadListener<BaseResponse> {
+            override fun onProgress(name: String, progress: Long, max: Long) {
+            }
+
+            override fun onResponseBodyParse(response: Response, convertedBody: BaseResponse?) {
+                println("BaseResponse: code=${convertedBody?.code}, msg: ${convertedBody?.message}")
+            }
+
+            override fun onStateChange(state: TaskInfo.State, t: Throwable?) {
+                if (info.state == TaskInfo.State.ERROR || info.state == TaskInfo.State.CANCEL) {
+                    println("uploadUserFigure error: $t")
+                } else if (info.state == TaskInfo.State.COMPLETED) {
+                    println("上传成功")
+                }
+            }
+        })
     }
 
     private fun testNetwork() {
