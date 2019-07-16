@@ -21,25 +21,7 @@ import java.io.File
 object Example {
     @JvmStatic
     fun main(args: Array<String>) {
-        val info = UploadInfo("http://120.78.49.23:8080/CM/api?action=1007", 
-            JsonResponseConverter(BaseResponse::class.java), mapOf(Pair("mailaddress", "16607735715")), 
-            mapOf(Pair("file", File("C:\\Users\\zfs\\Desktop\\horse.png"))))
-        NetworkRequester.upload(info, object : UploadListener<BaseResponse> {
-            override fun onProgress(name: String, progress: Long, max: Long) {
-            }
-
-            override fun onResponseBodyParse(response: Response, convertedBody: BaseResponse?) {
-                println("BaseResponse: code=${convertedBody?.code}, msg: ${convertedBody?.message}")
-            }
-
-            override fun onStateChange(state: TaskInfo.State, t: Throwable?) {
-                if (info.state == TaskInfo.State.ERROR || info.state == TaskInfo.State.CANCEL) {
-                    println("uploadUserFigure error: $t")
-                } else if (info.state == TaskInfo.State.COMPLETED) {
-                    println("上传成功")
-                }
-            }
-        })
+        
     }
 
     private fun testNetwork() {
