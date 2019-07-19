@@ -171,14 +171,11 @@ object FileUtils {
  * 删除文件夹内所有文件
  */
 fun File.clear() {
-    val files = listFiles()
-    if (files != null) {
-        for (f in files) {
-            if (f.isDirectory) {
-                deleteRecursively()
-            } else {
-                f.delete()
-            }
+    listFiles()?.forEach {
+        if (it.isDirectory) {
+            deleteRecursively()
+        } else {
+            it.delete()
         }
     }
 }
@@ -345,8 +342,7 @@ private fun copyDir(sourceDir: File, targetDir: File) {
     if (!targetDir.exists()) {
         targetDir.mkdirs()
     }
-    // 获取源文件夹当前下的文件或目录   
-    val files = sourceDir.listFiles()
+    // 获取源文件夹当前下的文件或目录
     sourceDir.listFiles()?.forEach {
         if (it.isFile) {
             copyFile(it, File(targetDir, it.name))
