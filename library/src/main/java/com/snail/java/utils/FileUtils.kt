@@ -22,23 +22,25 @@ object FileUtils {
         }
         return when {
             size < 1024L -> size.toString() + "B"
-            size < 1048576L -> decimalFormat.format((size / 1024f.toDouble())) + "KB"
+            size < 1048576L -> decimalFormat.format((size / 1024.toDouble())) + "KB"
             size < 1073741824L -> decimalFormat.format((size / 1048576.toDouble())) + "MB"
             size < 1099511627776L -> decimalFormat.format((size / 1073741824.toDouble())) + "GB"
             size < 1125899906842624L -> decimalFormat.format((size / 1099511627776.toDouble())) + "TB"
-            size < 1152921504606846976L -> decimalFormat.format((size / 1125899906842624f.toDouble())) + "PB"
+            size < 1152921504606846976L -> decimalFormat.format((size / 1125899906842624.toDouble())) + "PB"
             else -> "size: out of range"
         }
     }
 
     /**
-     * 从路径中获取文件名，包含扩展名
+     * 从路径中获取文件名
      *
      * @param path 路径
+     * @param withoutSuffix true不包含扩展名，false包含
      * @return 如果所传参数是合法路径，截取文件名，如果不是返回原值
      */
     @JvmStatic 
-    fun getFileName(path: String): String {
+    @JvmOverloads
+    fun getFileName(path: String, withoutSuffix: Boolean = false): String {
         if ((path.contains("/") || path.contains("\\"))) {
             var fileName = path.trim { it <= ' ' }
             var beginIndex = fileName.lastIndexOf("\\")            
@@ -49,34 +51,11 @@ object FileUtils {
             if (beginIndex != -1) {
                 fileName = fileName.substring(beginIndex + 1)
             }
-            return fileName
+            return if (withoutSuffix) deleteSuffix(fileName) else fileName
         }
-        return path
+        return if (withoutSuffix) deleteSuffix(path) else path
     }
-
-    /**
-     * 从路径中获取文件名，不包含扩展名
-     *
-     * @param path 路径
-     * @return 如果所传参数是合法路径，截取文件名，如果不是返回原值
-     */
-    @JvmStatic 
-    fun getFileNameWithoutSuffix(path: String): String {
-        if ((path.contains("/") || path.contains("\\"))) {
-            var fileName = path.trim { it <= ' ' }
-            var beginIndex = fileName.lastIndexOf("\\")
-            if (beginIndex != -1) {
-                fileName = fileName.substring(beginIndex + 1)
-            }
-            beginIndex = fileName.lastIndexOf("/")
-            if (beginIndex != -1) {
-                fileName = fileName.substring(beginIndex + 1)
-            }
-            return deleteSuffix(fileName)
-        }
-        return deleteSuffix(path)
-    }
-
+    
     /**
      * 获取扩展名
      *
@@ -168,6 +147,15 @@ object FileUtils {
 /*############################################ 扩展函数 #########################################*/
 
 /**
+ * 删除文件夹内所有文件
+ */
+fun File.clear() {
+    listFiles()?.forEach { 
+        it.deleteRecursively()
+    }
+}
+
+/**
  * 获取文件夹的大小
  *
  * @return 所传参数是目录且存在，则返回文件夹大小，否则返回-1
@@ -178,17 +166,14 @@ fun File.size(): Long {
         isFile -> length()
         else -> {
             var s: Long = 0
-            val files = listFiles()
-            if (files != null) {
-                for (file in files) {
-                    s += when {
-                        file.isDirectory -> file.size()
-                        file.isFile -> file.length()
-                        else -> 0
-                    }
+            listFiles()?.forEach {
+                s += when {
+                    it.isDirectory -> it.size()
+                    it.isFile -> it.length()
+                    else -> 0
                 }
-                s
-            } else 0
+            }
+            s
         }
     }
 }
@@ -329,12 +314,12 @@ private fun copyDir(sourceDir: File, targetDir: File) {
     if (!targetDir.exists()) {
         targetDir.mkdirs()
     }
-    // 获取源文件夹当前下的文件或目录
-    sourceDir.listFiles()?.forEach {
-        if (it.isFile) {
-            copyFile(it, File(targetDir, it.name))
+    // 获取源文件夹当前下的文件或目录   
+    sourceDir.listFiles()?.forEach { file ->
+        if (file.isFile) {
+            copyFile(file, File(targetDir, file.name))
         } else {
-            copyDir(it, File(targetDir, it.name))
+            copyDir(file, File(targetDir, file.name))
         }
     }
 }

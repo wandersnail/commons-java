@@ -134,7 +134,7 @@ object ZipHelper {
                                 }
                             } else {
                                 val path = zipFile.absolutePath
-                                val newName = FileUtils.getFileNameWithoutSuffix(path) + System.currentTimeMillis() + FileUtils.getSuffix(path)
+                                val newName = FileUtils.getFileName(path, true) + System.currentTimeMillis() + FileUtils.getSuffix(path)
                                 zipFile = File(zipFile.parent, newName)
                             }
                         }
