@@ -14,8 +14,8 @@ dependencies {
 sourceCompatibility = "8"
 targetCompatibility = "8"
 
-def versionName = '1.1.6'
-group = "com.github.wandersnail"
+def versionName = '1.2.0'
+group = "cn.wandersnail"
 version = versionName
 
 publish {
