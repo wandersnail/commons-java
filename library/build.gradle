@@ -21,7 +21,7 @@ version = versionName
 publish {
     repoName="java"//仓库名
     userOrg = 'wandersnail' //bintray.com用户名  
-    groupId = 'com.github.wandersnail' //jcenter上的路径  
+    groupId = 'cn.wandersnail' //jcenter上的路径  
     artifactId = 'commons-java' //项目名称  
     publishVersion = versionName //版本号  
     desc = 'Java平台使用的公共库'
