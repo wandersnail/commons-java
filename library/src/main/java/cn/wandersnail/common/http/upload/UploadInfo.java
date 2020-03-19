@@ -2,6 +2,7 @@ package cn.wandersnail.common.http.upload;
 
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -17,14 +18,14 @@ import retrofit2.Converter;
 public class UploadInfo<T> extends TaskInfo {
     Converter<ResponseBody, T> converter;
     Map<String, String> paramParts;
-    final Map<String, File> fileParts;
+    final Map<String, List<File>> fileParts;
     OkHttpClient client;
 
-    public UploadInfo(String url, Map<String, File> fileParts) {
+    public UploadInfo(String url, Map<String, List<File>> fileParts) {
         this(UUID.randomUUID().toString(), url, fileParts);
     }
 
-    public UploadInfo(String tag, String url, Map<String, File> fileParts) {
+    public UploadInfo(String tag, String url, Map<String, List<File>> fileParts) {
         super(tag, url);
         this.fileParts = fileParts;        
     }

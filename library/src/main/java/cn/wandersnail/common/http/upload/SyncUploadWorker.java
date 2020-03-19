@@ -4,6 +4,7 @@ package cn.wandersnail.common.http.upload;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.List;
 import java.util.Map;
 
 import cn.wandersnail.common.http.ConvertedResponse;
@@ -44,13 +45,16 @@ public class SyncUploadWorker<T> {
                 listener.onProgress(name, progress, max);
             }
         };
-        for (Map.Entry<String, File> entry : info.fileParts.entrySet()) {
+        for (Map.Entry<String, List<File>> entry : info.fileParts.entrySet()) {
             try {
-                MultipartBody.Part part = MultipartBody.Part.createFormData(entry.getKey(),
-                        URLEncoder.encode(entry.getValue().getName(), "utf-8"),
-                        new ProgressRequestBody(MediaType.parse("multipart/form-data"), entry.getKey(),
-                                entry.getValue(), localListener));
-                bodyBuilder.addPart(part);
+                List<File> files = entry.getValue();
+                for (File file : files) {
+                    MultipartBody.Part part = MultipartBody.Part.createFormData(entry.getKey(),
+                            URLEncoder.encode(file.getName(), "utf-8"),
+                            new ProgressRequestBody(MediaType.parse("multipart/form-data"), entry.getKey(),
+                                    file, localListener));
+                    bodyBuilder.addPart(part);
+                }                
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
