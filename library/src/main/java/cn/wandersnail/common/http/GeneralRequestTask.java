@@ -18,7 +18,7 @@ import retrofit2.Response;
  * author: zengfansheng
  */
 class GeneralRequestTask<T> {
-    private Disposable disposable;
+    Disposable disposable;
 
     GeneralRequestTask(Observable<Response<ResponseBody>> observable, Converter<ResponseBody, T> converter,
                               Configuration configuration, RequestCallback<T> callback) {
@@ -46,9 +46,11 @@ class GeneralRequestTask<T> {
                     disposable = null;
                     if (callback != null) {
                         try {
-                            callback.onSuccess(response.raw(), converter.convert(response.body()));
+                            ResponseBody body = response.body();
+                            callback.onSuccess(response, body == null ? null : (converter == null ? (T) body : converter.convert(body)));
                         } catch (Throwable t) {
                             callback.onError(t);
+                            callback.onSuccess(response, null);
                         }
                     }
                 }, throwable -> {

@@ -1,17 +1,18 @@
 package cn.wandersnail.common.http.upload;
 
-import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.List;
 import java.util.Map;
 
 import cn.wandersnail.common.http.util.HttpUtils;
 import cn.wandersnail.common.http.util.SchedulerUtils;
+import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
+import okhttp3.ResponseBody;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
@@ -40,24 +41,26 @@ public class UploadWorker<T> implements Disposable {
                 bodyBuilder.addFormDataPart(entry.getKey(), entry.getValue());
             }
         }
-        for (Map.Entry<String, List<File>> entry : info.fileParts.entrySet()) {
+        for (FileInfo fileInfo : info.fileInfos) {
             try {
-                List<File> files = entry.getValue();
-                for (File file : files) {
-                    MultipartBody.Part part = MultipartBody.Part.createFormData(entry.getKey(),
-                            URLEncoder.encode(file.getName(), "utf-8"),
-                            new ProgressRequestBody(MediaType.parse("multipart/form-data"), entry.getKey(),
-                                    file, observer));
-                    bodyBuilder.addPart(part);
-                }
+                MultipartBody.Part part = MultipartBody.Part.createFormData(fileInfo.getFromDataName(),
+                        URLEncoder.encode(fileInfo.getFilename(), "utf-8"),
+                        new ProgressRequestBody(MediaType.parse("multipart/form-data"), fileInfo.getFilename(),
+                                fileInfo.getInputStream(), observer));
+                bodyBuilder.addPart(part);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
         }
-        service.upload(info.url, bodyBuilder.build())
-                .compose(SchedulerUtils.applyGeneralObservableSchedulers())
+        Observable<Response<ResponseBody>> observable;
+        if (info.headers == null || info.headers.isEmpty()) {
+            observable = service.upload(info.url, bodyBuilder.build());
+        } else {
+            observable = service.upload(info.url, bodyBuilder.build(), info.headers);
+        }
+        observable.compose(SchedulerUtils.applyGeneralObservableSchedulers())
                 .subscribe(observer);
-    }
+    }    
 
     @Override
     public void dispose() {

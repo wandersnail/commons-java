@@ -1,10 +1,12 @@
 package cn.wandersnail.common.http.upload;
 
+
 import java.util.HashMap;
 import java.util.Map;
 
 import cn.wandersnail.common.http.TaskInfo;
 import io.reactivex.Observer;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
@@ -20,22 +22,22 @@ class UploadObserver<T> implements Observer<Response<ResponseBody>>, Disposable,
     private final UploadListener<T> listener;
     private Disposable disposable;
     private long lastUpdateTime;//上次进度更新时间
-    private Map<String, Long> contentLengthMap = new HashMap<>();
+    private final Map<String, Long> contentLengthMap = new HashMap<>();
 
-    UploadObserver(UploadInfo<T> info, UploadListener<T> listener) {
+    UploadObserver(@NonNull UploadInfo<T> info, UploadListener<T> listener) {
         this.info = info;
         this.listener = listener;
     }
 
     @Override
-    public void onProgress(String name, long progress, long max) {
+    public void onProgress(String filename, long progress, long max) {
         Schedulers.io().scheduleDirect(() -> {
             long completionLength = progress;
-            Long contentLen = contentLengthMap.get(name);
+            Long contentLen = contentLengthMap.get(filename);
             if (contentLen != null && contentLen > max) {
                 completionLength += contentLen - max;
             } else {
-                contentLengthMap.put(name, max);
+                contentLengthMap.put(filename, max);
                 contentLen = max;
             }
             if (System.currentTimeMillis() - lastUpdateTime >= UPDATE_LIMIT_DURATION && (info.state == TaskInfo.State.IDLE ||
@@ -47,7 +49,7 @@ class UploadObserver<T> implements Observer<Response<ResponseBody>>, Disposable,
                     }
                 }
                 if (listener != null) {
-                    listener.onProgress(name, completionLength, contentLen);
+                    listener.onProgress(filename, completionLength, contentLen);
                 }
                 lastUpdateTime = System.currentTimeMillis();
             }
@@ -65,18 +67,19 @@ class UploadObserver<T> implements Observer<Response<ResponseBody>>, Disposable,
 
     @Override
     public void onNext(Response<ResponseBody> response) {
-        if (info.converter != null) {
-            try {
-                T convertedBody = info.converter.convert(response.body());
-                if (listener != null) {
-                    listener.onResponseBodyParse(response.raw(), convertedBody);
+        if (listener != null) {
+            if (info.converter != null) {
+                try {
+                    T convertedBody = info.converter.convert(response.body());
+                    listener.onResponseBodyParse(response, convertedBody);
+                } catch (Exception e) {
+                    listener.onConvertError(e);
+                    listener.onResponseBodyParse(response, null);
                 }
-            } catch (Exception e) {
-                onError(e);
+            } else {
+                listener.onResponseBodyParse(response, null);
             }
-        } else if (listener != null) {
-            listener.onResponseBodyParse(response.raw(), null);
-        }
+        }        
     }
 
     @Override

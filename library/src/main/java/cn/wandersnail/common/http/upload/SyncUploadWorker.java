@@ -1,10 +1,8 @@
 package cn.wandersnail.common.http.upload;
 
 
-import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.List;
 import java.util.Map;
 
 import cn.wandersnail.common.http.ConvertedResponse;
@@ -45,26 +43,28 @@ public class SyncUploadWorker<T> {
                 listener.onProgress(name, progress, max);
             }
         };
-        for (Map.Entry<String, List<File>> entry : info.fileParts.entrySet()) {
+        for (FileInfo fileInfo : info.fileInfos) {
             try {
-                List<File> files = entry.getValue();
-                for (File file : files) {
-                    MultipartBody.Part part = MultipartBody.Part.createFormData(entry.getKey(),
-                            URLEncoder.encode(file.getName(), "utf-8"),
-                            new ProgressRequestBody(MediaType.parse("multipart/form-data"), entry.getKey(),
-                                    file, localListener));
-                    bodyBuilder.addPart(part);
-                }                
+                MultipartBody.Part part = MultipartBody.Part.createFormData(fileInfo.getFromDataName(),
+                        URLEncoder.encode(fileInfo.getFilename(), "utf-8"),
+                        new ProgressRequestBody(MediaType.parse("multipart/form-data"), fileInfo.getFilename(),
+                                fileInfo.getInputStream(), localListener));
+                bodyBuilder.addPart(part);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
         }
-        Call<ResponseBody> call = service.uploadSync(info.url, bodyBuilder.build());
+        Call<ResponseBody> call;
+        if (info.headers == null || info.headers.isEmpty()) {
+            call = service.uploadSync(info.url, bodyBuilder.build());
+        } else {
+            call = service.uploadSync(info.url, bodyBuilder.build(), info.headers);
+        }
         convertedResp = new ConvertedResponse<>(call);
         try {
             Response<ResponseBody> response = call.execute();
             convertedResp.raw = response.raw();
-            if (response.isSuccessful() && info.converter != null) {
+            if (response.isSuccessful() && info.converter != null && response.body() != null) {
                 try {
                     convertedResp.convertedResponse = info.converter.convert(response.body());
                 } catch (Throwable t) {

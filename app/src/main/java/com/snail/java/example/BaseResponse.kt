@@ -7,5 +7,9 @@ package com.snail.java.example
  */
 open class BaseResponse {
     var code: Int = 0
-    var message: String? = null
+    var msg: String? = null
+    
+    override fun toString(): String {
+        return "BaseResponse(code=$code, msg=$msg)"
+    }
 }
