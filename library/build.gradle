@@ -14,7 +14,8 @@ dependencies {
 sourceCompatibility = "8"
 targetCompatibility = "8"
 
-def versionName = '1.0.0'
+def versionName = '2.0.0'
+def libArtifact = 'commons-java'
 group = "cn.wandersnail"
 version = versionName
 
@@ -22,7 +23,7 @@ publish {
     repoName="java"//仓库名
     userOrg = 'wandersnail' //bintray.com用户名  
     groupId = 'cn.wandersnail' //jcenter上的路径  
-    artifactId = 'commons-java2' //项目名称  
+    artifactId = libArtifact //项目名称  
     publishVersion = versionName //版本号  
     desc = 'Java平台使用的公共库'
     website = 'https://github.com/wandersnail'
@@ -38,8 +39,8 @@ if (project.getGradle().startParameter.taskNames.any{it.contains('bintrayUpload'
             pom {
                 //noinspection GroovyAssignabilityCheck
                 project {
-                    name "commons-java2"
-                    artifactId 'commons-java2'
+                    name libArtifact
+                    artifactId libArtifact
                     packaging 'jar'
                     description 'widely used tools'
                     url 'https://github.com/wandersnail'
