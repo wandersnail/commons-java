@@ -14,7 +14,7 @@ dependencies {
 sourceCompatibility = "8"
 targetCompatibility = "8"
 
-def versionName = '2.0.0'
+def versionName = '2.0.1'
 def libArtifact = 'commons-java'
 group = "cn.wandersnail"
 version = versionName

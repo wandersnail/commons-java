@@ -1,8 +1,8 @@
 package cn.wandersnail.common.http;
 
-import okhttp3.Response;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * 转换过的响应数据
@@ -23,7 +23,7 @@ public class ConvertedResponse<T> {
     /**
      * 原始响应
      */
-    public Response raw;
+    public Response<ResponseBody> response;
     /**
      * 是否请求超时了
      */
