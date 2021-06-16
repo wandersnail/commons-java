@@ -1,6 +1,8 @@
 package cn.wandersnail.common.http;
 
 
+import com.google.gson.Gson;
+
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -20,6 +22,7 @@ import io.reactivex.plugins.RxJavaPlugins;
  */
 public class EasyHttp {
     static final ExecutorService executorService = Executors.newCachedThreadPool();
+    private static Gson gson;
 
     static {
         RxJavaPlugins.setErrorHandler(t -> {
@@ -44,6 +47,17 @@ public class EasyHttp {
                 Thread.currentThread().getUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), t);
             }
         });
+    }
+
+    public static Gson getGson() {
+        if (gson == null) {
+            gson = new Gson();
+        }
+        return gson;
+    }
+
+    public static void setGson(Gson gson) {
+        EasyHttp.gson = gson;
     }
 
     /**
