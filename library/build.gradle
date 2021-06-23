@@ -18,7 +18,7 @@ signing {
     sign configurations.archives
 }
 
-def lib_version = '2.1.0'
+def lib_version = '2.1.1'
 def user_name = 'wandersnail'
 def lib_group = 'cn.wandersnail'
 def lib_artifact = 'commons-java'

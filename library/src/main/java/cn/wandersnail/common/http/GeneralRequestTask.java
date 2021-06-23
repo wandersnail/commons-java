@@ -45,13 +45,13 @@ class GeneralRequestTask<T> {
                 .subscribe(response -> {
                     disposable = null;
                     if (callback != null) {
-                        try {
+                        T successBody = null;
+                        if (response.isSuccessful()) {
                             ResponseBody body = response.body();
-                            callback.onSuccess(response, body == null ? null : (converter == null ? (T) body : converter.convert(body)));
-                        } catch (Throwable t) {
-                            callback.onError(t);
-                            callback.onSuccess(response, null);
+                            successBody = body == null ? null : (converter == null ? (T) body : converter.convert(body));
+                            callback.onSuccess(response, successBody);
                         }
+                        callback.onResponse(response, successBody, response.errorBody());
                     }
                 }, throwable -> {
                     disposable = null;
