@@ -1,7 +1,5 @@
 package cn.wandersnail.common.http.converter;
 
-import com.alibaba.fastjson2.JSON;
-
 import cn.wandersnail.common.http.EasyHttp;
 import cn.wandersnail.common.http.callback.JsonParser;
 import cn.wandersnail.common.http.exception.ConvertException;
@@ -41,7 +39,7 @@ public class JsonResponseConverter<T> implements Converter<ResponseBody, T> {
             if (parser != null) {
                 return parser.parse(value.string());
             } else if (parserType == JsonParserType.FASTJSON2 && isFastjson2Supported()) {
-                return JSON.parseObject(value.string(), cls);
+                return com.alibaba.fastjson2.JSON.parseObject(value.string(), cls);
             } else if (parserType == JsonParserType.FASTJSON && isFastjsonSupported()) {
                 return com.alibaba.fastjson.JSON.parseObject(value.string(), cls);
             } else if (parserType == JsonParserType.GSON && isGsonSupported()) {
