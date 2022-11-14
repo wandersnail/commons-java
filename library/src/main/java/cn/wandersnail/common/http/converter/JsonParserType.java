@@ -5,5 +5,5 @@ package cn.wandersnail.common.http.converter;
  * author: zengfansheng
  */
 public enum JsonParserType {
-    GSON, FASTJSON
+    GSON, FASTJSON, FASTJSON2
 }

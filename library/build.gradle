@@ -3,11 +3,11 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 dependencies {
-    compileOnly "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compileOnly "com.squareup.retrofit2:retrofit:$retrofit2_version"
     compileOnly "io.reactivex.rxjava2:rxjava:$rxjava2_version"
     compileOnly "com.squareup.retrofit2:adapter-rxjava2:$retrofit2_version"
-    compileOnly "com.alibaba:fastjson:$fastjson_version"
+    compileOnly 'com.alibaba.fastjson2:fastjson2:2.0.19'
+    compileOnly 'com.alibaba:fastjson:2.0.19'
     compileOnly "com.google.code.gson:gson:$gson_version"
 }
 
@@ -18,7 +18,7 @@ signing {
     sign configurations.archives
 }
 
-def lib_version = '2.1.1'
+def lib_version = '2.2.0'
 def user_name = 'wandersnail'
 def lib_group = 'cn.wandersnail'
 def lib_artifact = 'commons-java'
